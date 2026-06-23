@@ -1,60 +1,64 @@
-let milliseconds = 0;  
-let seconds = 0;       
-let minutes = 0;       
-let hours = 0;
-let interval = null;
+let startTime   = null;   
+let accumulated = 0;    
+let rafId       = null;   
+let running     = false;
 
-function updateDisplay() {
-    const pad = (val, digits = 2) => val.toString().padStart(digits, '0');
-    document.getElementById("display").textContent =
-        `${pad(hours)}:${pad(minutes)}:${pad(seconds)}.${pad(milliseconds, 2)}`;  // Fixed: 2 digits for ms
+const pad = (val, digits = 2) => String(val).padStart(digits, '0');
+
+function format(ms) {
+  const h   = Math.floor(ms / 3_600_000);
+  const m   = Math.floor((ms % 3_600_000) / 60_000);
+  const s   = Math.floor((ms % 60_000)    /  1_000);
+  const mil =             ms % 1_000;
+
+  return `${pad(h)}:${pad(m)}:${pad(s)}.${pad(mil, 3)}`;
+}
+
+const display  = document.getElementById('display');
+const startBtn = document.getElementById('start_btn');
+const stopBtn  = document.getElementById('stop_btn');
+const resetBtn = document.getElementById('reset_btn');
+
+function tick() {
+  const elapsed = accumulated + (Date.now() - startTime);
+  display.textContent = format(elapsed);
+  rafId = requestAnimationFrame(tick);
 }
 
 function startTimer() {
-    if (interval) return;
-    
-    document.getElementById("start_btn").disabled = true;
-    document.getElementById("stop_btn").disabled = false;
+  if (running) return;
+  running   = true;
+  startTime = Date.now();
+  rafId     = requestAnimationFrame(tick);
 
-    interval = setInterval(() => {
-        milliseconds += 10;
-
-        if (milliseconds === 1000) {
-            milliseconds = 0;
-            seconds++;
-            if (seconds === 60) {
-                seconds = 0;
-                minutes++;
-                if (minutes === 60) {
-                    minutes = 0;
-                    hours++;
-                }
-            }
-        }
-        updateDisplay();
-    }, 10);
+  startBtn.disabled = true;
+  stopBtn.disabled  = false;
+  resetBtn.disabled = true;
 }
 
 function stopTimer() {
-    clearInterval(interval);
-    interval = null;
-    
-    document.getElementById("start_btn").disabled = false;
-    document.getElementById("stop_btn").disabled = true;
+  if (!running) return;
+  running      = false;
+  accumulated += Date.now() - startTime;
+  cancelAnimationFrame(rafId);
+  rafId = null;
+
+  startBtn.disabled = false;
+  stopBtn.disabled  = true;
+  resetBtn.disabled = false;
 }
 
 function resetTimer() {
-    clearInterval(interval);
-    interval = null;
-    milliseconds = 0;
-    seconds = 0;
-    minutes = 0;
-    hours = 0;
-    
-    document.getElementById("start_btn").disabled = false;
-    document.getElementById("stop_btn").disabled = true;
-    
-    updateDisplay();
+  running     = false;
+  accumulated = 0;
+  startTime   = null;
+  cancelAnimationFrame(rafId);
+  rafId = null;
+
+  display.textContent = format(0);   
+  startBtn.disabled = false;
+  stopBtn.disabled  = true;
+  resetBtn.disabled = true;
 }
 
-updateDisplay();
+resetTimer();
