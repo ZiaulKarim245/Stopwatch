@@ -62,9 +62,10 @@ function resetTimer() {
 }
 
 resetTimer()
+
 function toggleTheme() {
     const isDark = document.body.classList.toggle('dark-mode');
-    document.getElementById('theme-label').textContent = isDark ? 'Night Mode' : 'Day Mode';
-    document.getElementById('toggle-icon').textContent = isDark ? '🌙' : '☀️';
+    document.getElementById('theme-label').textContent = isDark ? 'Day Mode' : 'Night Mode';
+    document.getElementById('toggle-icon').innerHTML = isDark ? '☀️' : '🌙';
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
 }

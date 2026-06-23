@@ -29,13 +29,26 @@
 
     <script src="../Scripts/script.js"></script>
 
-    <script>
+    <!-- <script>
     (function () {
         if (localStorage.getItem('theme') === 'dark') {
             document.body.classList.add('dark-mode');
             document.getElementById('theme-label').textContent = 'Night Mode';
             document.getElementById('toggle-icon').textContent = '🌙';
         }
+    })();
+    </script> -->
+
+    <script>
+    (function () {
+    if (localStorage.getItem('theme') === 'dark') {
+        document.body.classList.add('dark-mode');
+        document.getElementById('theme-label').textContent = 'Day Mode';
+        document.getElementById('toggle-icon').textContent = '☀️';
+    } else {
+        document.getElementById('theme-label').textContent = 'Night Mode';
+        document.getElementById('toggle-icon').textContent = '🌙';
+    }
     })();
 </script>
 
