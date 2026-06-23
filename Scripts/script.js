@@ -61,4 +61,10 @@ function resetTimer() {
   resetBtn.disabled = true;
 }
 
-resetTimer();
+resetTimer()
+function toggleTheme() {
+    const isDark = document.body.classList.toggle('dark-mode');
+    document.getElementById('theme-label').textContent = isDark ? 'Night Mode' : 'Day Mode';
+    document.getElementById('toggle-icon').textContent = isDark ? '🌙' : '☀️';
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+}
